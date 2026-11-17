@@ -206,6 +206,8 @@ To run the library, you need:
   - Access to Azure OpenAI Service or Open AI GPT-4 APIs. You can get access to the Azure OpenAI Service [here](https://azure.microsoft.com/en-us/products/ai-services/openai-service), and to the OpenAI API [here](https://platform.openai.com/). 
       * For Azure OpenAI Service, you will need to set the `AZURE_OPENAI_KEY` and `AZURE_OPENAI_ENDPOINT` environment variables to your API key and endpoint, respectively.
       * For OpenAI, you will need to set the `OPENAI_API_KEY` environment variable to your API key.
+      * For Gemini, set `GEMINI_API_KEY`, use `API_TYPE=gemini`, and set `MODEL` to a Gemini model name in your custom `config.ini`.
+      * For OpenRouter, set `OPENROUTER_API_KEY`, use `API_TYPE=openrouter`, and set `MODEL` to an OpenRouter model ID in your custom `config.ini`.
       * For example, on Linux/macOS: `export OPENAI_API_KEY=your-key-here`, or on Windows (PowerShell): `$env:OPENAI_API_KEY="your-key-here"`. To persist it, add it to your shell profile or use `setx OPENAI_API_KEY "your-key-here"` on Windows.
   - By default, TinyTroupe `config.ini` is set to use OpenAI API with `gpt-5-mini` as the main model. The previous default (`gpt-4.1-mini`) is now considered legacy but is still expected to work. You can customize these values by including your own `config.ini` file in the same folder as the program or notebook you are running. An example of a `config.ini` file is provided in the [examples/](./examples/) folder.
 
@@ -699,7 +701,46 @@ LLM API caching, when enabled, works at a lower and simpler level than simulatio
 
 ### Config.ini
 
-The `config.ini` file contains various parameters that can be used to customize the behavior of the library, such as model parameters and logging level. Please pay special attention to the `API_TYPE` parameter, which defines whether you are using the Azure OpenAI Service or the OpenAI API. The current default is set to `openai` (OpenAI API).
+The `config.ini` file contains various parameters that can be used to customize the behavior of the library, such as model parameters and logging level. Please pay special attention to the `API_TYPE` parameter, which selects OpenAI, Azure OpenAI Service, Gemini, OpenRouter, or Ollama. The current default is `openai` (OpenAI API).
+
+See [Switching API Providers](./docs/guides/api-providers.md) for complete
+configuration examples for every supported provider.
+
+To use Gemini through its OpenAI-compatible endpoint, set the API key in the
+environment and add the following values to your custom `config.ini`:
+
+```bash
+export GEMINI_API_KEY="your-key-here"
+```
+
+```ini
+[OpenAI]
+API_TYPE=gemini
+MODEL=your-gemini-model
+EMBEDDING_MODEL=gemini-embedding-001
+```
+
+Gemini uses the fixed
+`https://generativelanguage.googleapis.com/v1beta/openai/` endpoint.
+Gemini reuses TinyTroupe's existing OpenAI-compatible chat request, retry,
+concurrency, caching, and structured-output code paths. Embeddings use
+LlamaIndex's native Google GenAI integration.
+
+To use OpenRouter, set its API key and select a model and embedding model that
+OpenRouter supports:
+
+```bash
+export OPENROUTER_API_KEY="your-key-here"
+```
+
+```ini
+[OpenAI]
+API_TYPE=openrouter
+MODEL=your-provider/your-model
+EMBEDDING_MODEL=your-provider/your-embedding-model
+```
+
+OpenRouter uses the fixed `https://openrouter.ai/api/v1` endpoint.
 
 Key configuration sections include:
 - **[OpenAI]**: API settings, model selection, and parameters

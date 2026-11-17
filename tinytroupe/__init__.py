@@ -447,6 +447,8 @@ def get_config(key, override_value=None):
 
 if config_manager.get("api_type") == "azure":
     from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
+elif config_manager.get("api_type") == "gemini":
+    from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 else:
     from llama_index.embeddings.openai import OpenAIEmbedding
 
@@ -464,6 +466,19 @@ if config_manager.get("api_type") == "azure":
         model=config_manager.get("embedding_model"),
         deployment_name=config_manager.get("embedding_model"),
         api_version=config_manager.get("azure_embedding_model_api_version"),
+        embed_batch_size=10,
+    )
+elif config_manager.get("api_type") == "gemini":
+    llamaindex_openai_embed_model = GoogleGenAIEmbedding(
+        model_name=config_manager.get("embedding_model"),
+        api_key=os.getenv("GEMINI_API_KEY"),
+        embed_batch_size=10,
+    )
+elif config_manager.get("api_type") == "openrouter":
+    llamaindex_openai_embed_model = OpenAIEmbedding(
+        model_name=config_manager.get("embedding_model"),
+        api_key=os.getenv("OPENROUTER_API_KEY"),
+        api_base="https://openrouter.ai/api/v1",
         embed_batch_size=10,
     )
 else:

@@ -289,9 +289,15 @@ class OpenAIClient(LLMCacheBase):
                 i += 1
 
                 try:
-                    logger.debug(
-                        f"Sending messages to OpenAI API. Token count={self._count_tokens(current_messages, model)}."
-                    )
+                    token_count = self._count_tokens(current_messages, model)
+                    if token_count is not None:
+                        logger.debug(
+                            f"Sending messages to OpenAI API. Token count={token_count}."
+                        )
+                    else:
+                        logger.debug(
+                            f"Sending messages to OpenAI API. Token count unavailable for model {model}."
+                        )
                 except NotImplementedError:
                     logger.debug(f"Token count not implemented for model {model}.")
 
