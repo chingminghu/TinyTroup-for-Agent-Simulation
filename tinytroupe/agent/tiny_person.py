@@ -738,7 +738,7 @@ class TinyPerson(JsonSerializableRegistry):
                 self._update_cognitive_state(
                     goals=cognitive_state.get("goals", None),
                     context=cognitive_state.get("context", None),
-                    attention=cognitive_state.get("emotions", None),
+                    attention=cognitive_state.get("attention", None),
                     emotions=cognitive_state.get("emotions", None),
                 )
 
